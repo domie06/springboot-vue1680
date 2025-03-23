@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.yjkj.framework.rbac.family.dao.FamilyDao">
+	<resultMap type="com.yjkj.framework.rbac.family.model.Family" id="familyMap">
+	<association property="userInfo" javaType="com.yjkj.framework.rbac.userInfo.model.UserInfo" column="user_id" select="com.yjkj.framework.rbac.userInfo.dao.UserInfoDao.queryOne"></association>
+	</resultMap>
+	<select id="informationLoad" parameterType="java.util.HashMap"
+		resultMap="familyMap">
+		SELECT
+		*
+		FROM
+		family 
+		<where>
+			is_delete = '0'
+			<if test="family.user_id != null and family.user_id != ''">
+				AND user_id=#{family.user_id}
+			</if>
+		</where>
+		ORDER BY
+		id
+		DESC
+		LIMIT
+		#{pager.offSet},#{pager.pageSize}
+	</select>
+	<select id="informationLoadAll"
+		resultMap="familyMap">
+		SELECT
+		*
+		FROM
+		family 
+		<where>
+			is_delete = '0'
+			<if test="user_id != null and user_id != ''">
+				AND user_id=#{user_id}
+			</if>
+		</where>
+		ORDER BY
+		id
+		DESC
+	</select>
+	<select id="count" resultType="int">
+		SELECT
+		COUNT(*)
+		FROM
+		family
+		<where>
+			is_delete = '0'
+			<if test="user_id != null and user_id != ''">
+				AND user_id=#{user_id}
+			</if>
+		</where>
+	</select>
+	<select id="informationLoadOne"  resultMap="familyMap">
+		SELECT
+		*
+		FROM
+		family
+		WHERE
+		id=#{id}
+	</select>
+
+
+	<delete id="informationDelete" >
+		UPDATE
+		family
+		SET
+		is_delete = '1'
+		WHERE id=#{id}
+	</delete>
+
+
+	<insert id="informationAdd" parameterType="com.yjkj.framework.rbac.family.model.Family">
+		INSERT INTO
+		family
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="user_id != null">
+				user_id,
+			</if>
+			<if test="createtime != null">
+				createtime,
+			</if>
+			<if test="is_delete != null">
+				is_delete,
+			</if>
+			<if test="flag != null">
+				flag,
+			</if>
+		</trim>
+		VALUES
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id},
+			</if>
+			<if test="name != null">
+				#{name},
+			</if>
+			<if test="user_id != null">
+				#{user_id},
+			</if>
+			<if test="createtime != null">
+				#{createtime},
+			</if>
+			<if test="is_delete != null">
+				#{is_delete},
+			</if>
+			<if test="flag != null">
+				#{flag},
+			</if>
+		</trim>
+	</insert>
+	<update id="informationUpdate" parameterType="com.yjkj.framework.rbac.family.model.Family">
+		UPDATE
+		family
+		<set>
+			<if test="name != null">
+				name=#{name},
+			</if>
+			<if test="user_id != null">
+				user_id=#{user_id},
+			</if>
+			<if test="createtime != null">
+				createtime=#{createtime},
+			</if>
+			<if test="is_delete != null">
+				is_delete=#{is_delete},
+			</if>
+			<if test="flag != null">
+				flag=#{flag},
+			</if>
+		</set>
+		WHERE id=#{id}
+	</update>
+</mapper>

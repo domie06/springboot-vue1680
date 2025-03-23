@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.yjkj.framework.rbac.count.dao.CountDao">
+	<resultMap type="com.yjkj.framework.rbac.count.model.Count" id="countMap">
+	</resultMap>
+	<select id="countIncome" parameterType="java.util.HashMap"
+		resultMap="countMap">
+		SELECT
+		f.name as name,
+		SUM(i.price) as priceSum
+		FROM
+		income i
+		LEFT JOIN
+		family f
+		ON
+		i.family_id = f.id
+		<where>
+			i.user_id = #{count.user_id}
+			<if test="count.start_time != null and count.start_time != '' and count.end_time != null and count.end_time != ''">
+				AND i.come_date BETWEEN #{count.start_time} AND #{count.end_time}
+			</if>
+			<if test="count.searchName != null and count.searchName != ''">
+				AND f.name LIKE CONCAT(CONCAT('%', #{count.searchName}), '%')
+			</if>
+		</where>
+		GROUP BY
+		f.name
+		LIMIT
+		#{pager.offSet},#{pager.pageSize}
+	</select>
+	<select id="countOutcome" parameterType="java.util.HashMap"
+		resultMap="countMap">
+		SELECT
+		f.name as name,
+		SUM(o.price) as priceSum
+		FROM
+		outcome o
+		LEFT JOIN
+		family f
+		ON
+		o.family_id = f.id
+		<where>
+		o.user_id = #{count.user_id}
+		<if test="count.start_time != null and count.start_time != '' and count.end_time != null and count.end_time != ''">
+				AND o.come_date BETWEEN #{count.start_time} AND #{count.end_time}
+			</if>
+			<if test="count.searchName != null and count.searchName != ''">
+				AND f.name LIKE CONCAT(CONCAT('%', #{count.searchName}), '%')
+			</if>
+		</where>
+		GROUP BY
+		f.name
+		LIMIT
+		#{pager.offSet},#{pager.pageSize}
+	</select>
+	<select id="numIncome" resultType="int">
+		SELECT
+		COUNT(*)
+		FROM
+		income i
+		LEFT JOIN
+		family f
+		ON
+		i.family_id = f.id
+		<where>
+		i.user_id = #{user_id}
+		<if test="start_time != null and start_time != '' and end_time != null and end_time != ''">
+				AND i.come_date BETWEEN #{start_time} AND #{end_time}
+			</if>
+			<if test="searchName != null and searchName != ''">
+				AND f.name LIKE CONCAT(CONCAT('%', #{searchName}), '%')
+			</if>
+		</where>
+	</select>
+	<select id="numOutcome" resultType="int">
+		SELECT
+		COUNT(*)
+		FROM
+		outcome o
+		LEFT JOIN
+		family f
+		ON
+		o.family_id = f.id
+		<where>
+		o.user_id = #{user_id}
+		<if test="start_time != null and start_time != '' and end_time != null and end_time != ''">
+				AND o.come_date BETWEEN #{start_time} AND #{end_time}
+			</if>
+			<if test="searchName != null and searchName != ''">
+				AND f.name LIKE CONCAT(CONCAT('%', #{searchName}), '%')
+			</if>
+		</where>
+	</select>
+</mapper>
